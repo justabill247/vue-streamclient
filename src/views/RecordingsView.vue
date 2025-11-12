@@ -18,7 +18,8 @@
       >
         <div class="flex flex-col overflow-hidden">
           <span class="font-semibold truncate">{{ rec.name }}</span>
-          <span class="text-xs text-gray-400 truncate">{{ rec.date }}</span>
+          <span class="text-xs text-gray-400 truncate">{{ rec.stream_name }}</span>
+          <span class="text-xs text-gray-400 truncate">{{ formatDate(rec.start_time) }} for {{formatDuration(rec.duration)}}</span>
         </div>
 
         <div class="flex items-center space-x-2">
@@ -46,7 +47,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { usePlayerStore } from "../stores/player";
+import { useStreamStore } from "../stores/streams";
+import dayjs from "dayjs";
 const player = usePlayerStore();
+const streams = useStreamStore();
 
 const recordings = ref([]);
 const loading = ref(true);
@@ -56,6 +60,7 @@ async function fetchRecordings() {
     const res = await fetch("/api/recordings");
     const data = await res.json();
     recordings.value = data;
+    console.log("rd", recordings.value)
   } catch (err) {
     console.error("Error loading recordings:", err);
   } finally {
@@ -79,6 +84,21 @@ function playRecording(rec) {
 
 function downloadRecording(rec) {
   window.open(rec.url || `/audio/${rec.filename}`, "_blank");
+}
+
+function formatDate(dateString) {
+  return dayjs(dateString).format("MMM D, YYYY h:mm A");
+}
+
+function formatDuration(seconds) {
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+
+  if (hrs > 0) {
+    return `${hrs} hr${hrs > 1 ? "s" : ""} ${mins} min${mins !== 1 ? "s" : ""}`;
+  } else {
+    return `${mins} min${mins !== 1 ? "s" : ""}`;
+  }
 }
 
 onMounted(fetchRecordings);

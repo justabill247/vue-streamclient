@@ -35,7 +35,7 @@
     ></div>
   </div>
 
-  <!-- Hidden Audio Element -->
+  <!-- Hidden Native Audio Player Element -->
   <audio
     ref="audioEl"
     :src="currentTrack?.url"
@@ -81,9 +81,10 @@ const onEnded = () => {
 watch(currentTrack, async (newTrack) => {
   if(!newTrack || !audioEl.value) return
 
-  // wait for dom to update
+  // bugfix: wait for dom to update
   await nextTick();
 
+  // load and play the track, update store
   audioEl.value.load()
   audioEl.value.play().then(() =>{
     playerStore.setPlaying = true;
