@@ -23,13 +23,13 @@
       <!-- Choose Saved Stream -->
       <div>
         <label class="block text-sm font-medium mb-1"
-          >Choose Saved Stream</label
+          >Stream</label
         >
         <select
           v-model="form.streamId"
           class="w-full border rounded-lg p-2 bg-gray-900 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
-          <option value="">— None (enter manual URL below) —</option>
+          <option class="hidden" value="">— None (enter manual URL below) —</option>
           <option v-for="s in streams" :key="s.id" :value="s.id">
             {{ s.name }}
           </option>
@@ -37,7 +37,7 @@
       </div>
 
       <!-- Or Manual URL -->
-      <div>
+      <div class="hidden">
         <label class="block text-sm font-medium mb-1">Manual Stream URL</label>
         <input
           v-model="form.url"
@@ -213,8 +213,8 @@ const pad = (n) => n.toString().padStart(2, "0");
 const form = ref({
   name: "",
   duration: 60,
-  hour: pad(now.getHours()),
-  minute: pad(now.getMinutes()),
+  hour: pad(now.getHours()), // default to current hour
+  minute: pad(now.getMinutes()), // default to current minute
   cron: "",
   frequency: "daily",
   specificDay: "",

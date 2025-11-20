@@ -87,7 +87,9 @@ function downloadRecording(rec) {
 }
 
 function formatDate(dateString) {
-  return dayjs(dateString).format("MMM D, YYYY h:mm A");
+  const day = dayjs(dateString).format("MM/DD/YYYY")
+  const time = dayjs(dateString).format("h:mm A")
+  return `${day} at ${time}`;
 }
 
 function formatDuration(seconds) {
