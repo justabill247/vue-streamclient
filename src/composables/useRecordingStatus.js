@@ -1,12 +1,20 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 
 let ws = null;
+let reconnectTimeout = null;
+let useCount = 0;
 const activeRecordingCount = ref(0);
 const recordings = ref([]);
 
 export function useRecordingStatus() {
   const connect = () => {
     try {
+      // Don't connect if already connected or connecting
+      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+        console.log('[Recording Status] Already connected or connecting');
+        return;
+      }
+
       // Get backend URL from environment or use default
       const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
       
@@ -42,8 +50,12 @@ export function useRecordingStatus() {
       };
 
       ws.onclose = () => {
-        console.log('[Recording Status] WebSocket disconnected, attempting reconnect in 3s...');
-        setTimeout(connect, 3000);
+        console.log('[Recording Status] WebSocket disconnected');
+        // Only reconnect if we still have active users
+        if (useCount > 0) {
+          console.log('[Recording Status] Will attempt reconnect in 3s...');
+          reconnectTimeout = setTimeout(connect, 3000);
+        }
       };
     } catch (err) {
       console.error('[Recording Status] Failed to create WebSocket:', err);
@@ -52,19 +64,32 @@ export function useRecordingStatus() {
 
   const disconnect = () => {
     if (ws) {
+      console.log('[Recording Status] Closing WebSocket connection');
       ws.close();
       ws = null;
+    }
+    if (reconnectTimeout) {
+      clearTimeout(reconnectTimeout);
+      reconnectTimeout = null;
     }
   };
 
   onMounted(() => {
-    console.log('[Recording Status] Component mounted, connecting...');
-    connect();
+    useCount++;
+    console.log('[Recording Status] Component mounted, use count:', useCount);
+    if (useCount === 1) {
+      console.log('[Recording Status] First component mounted, connecting...');
+      connect();
+    }
   });
 
   onUnmounted(() => {
-    console.log('[Recording Status] Component unmounted, disconnecting...');
-    disconnect();
+    useCount--;
+    console.log('[Recording Status] Component unmounted, use count:', useCount);
+    if (useCount === 0) {
+      console.log('[Recording Status] Last component unmounted, disconnecting...');
+      disconnect();
+    }
   });
 
   return {
