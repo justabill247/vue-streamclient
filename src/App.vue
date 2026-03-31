@@ -35,7 +35,7 @@
         </div>
         <div 
           v-else
-          class="absolute top-1 right-1 bg-spotify-bg-card text-spotify-text-disabled text-xs font-bold px-1.5 py-0.5 rounded"
+          class="absolute top-1 right-1 bg-transparent text-spotify-text-secondary text-xs font-bold px-1.5 py-0.5 rounded border-2 border-spotify-green"
         >
           Idle
         </div>

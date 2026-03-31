@@ -79,7 +79,7 @@
                   'flex-1 py-2 rounded-lg font-medium transition',
                   recordForm.mode === 'preset'
                     ? 'bg-spotify-green text-black'
-                    : 'bg-spotify-bg-tertiary text-spotify-text-secondary hover:bg-spotify-bg-card'
+                    : 'bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border hover:bg-spotify-bg-card hover:border-spotify-text-secondary'
                 ]"
               >
                 From List
@@ -90,7 +90,7 @@
                   'flex-1 py-2 rounded-lg font-medium transition',
                   recordForm.mode === 'custom'
                     ? 'bg-spotify-green text-black'
-                    : 'bg-spotify-bg-tertiary text-spotify-text-secondary hover:bg-spotify-bg-card'
+                    : 'bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border hover:bg-spotify-bg-card hover:border-spotify-text-secondary'
                 ]"
               >
                 Custom URL
