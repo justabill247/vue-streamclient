@@ -1,56 +1,55 @@
 <template>
-  <div class="p-4 space-y-2">
+  <div class="p-4 space-y-3">
     <div class="w-full flex justify-between items-center">
-      <h1 class="text-2xl font-semibold">Home</h1>
-      <div class="flex flex-col">
-        <h2 class="text-xs font-light">Recorder Status: Idle</h2>
-        <span class="text-xs">disk space graph</span>
+      <h1 class="text-2xl font-bold text-spotify-text-primary">Home</h1>
+      <div class="flex flex-col text-right">
+        <h2 class="text-xs font-light text-spotify-text-secondary">Recorder Status: Idle</h2>
+        <span class="text-xs text-spotify-text-disabled">disk space graph</span>
       </div>
-      
     </div>
 
     <div class="flex flex-col gap-3">
-      <div class="flex flex-col bg-gray-900 gap-2 p-1">
+      <div class="flex flex-col bg-spotify-bg-secondary gap-2 p-3 border border-spotify-border rounded-lg">
         <div class="flex justify-between">
-          <span>Recent Recordings</span>
-          <span>filter</span>  
+          <span class="font-semibold text-spotify-text-primary">Recent Recordings</span>
+          <span class="text-spotify-text-secondary text-sm">filter</span>  
         </div>
         
-        <div class="flex p-2 w-full bg-gray-800 rounded-sm">
-          <div class="w-full flex p-1">
+        <div class="flex p-3 w-full bg-spotify-bg-tertiary rounded-lg border border-spotify-border hover:border-spotify-text-secondary transition">
+          <div class="w-full flex p-2">
             <div>
-              <span class="flex flex-col">Pete Tongs Essential Collection</span>
-              <span>11/8/25</span>
+              <span class="flex flex-col text-spotify-text-primary font-medium">Pete Tongs Essential Collection</span>
+              <span class="text-xs text-spotify-text-secondary">11/8/25</span>
             </div>
-            <div class="flex items-center grow">
+            <div class="flex items-center grow text-spotify-text-secondary text-sm">
               <span>BBC Radio 1</span>
             </div>
           </div>
-          <div class="flex items-center">Play</div>
+          <div class="flex items-center text-spotify-green">Play</div>
         </div>
-        <div class="flex p-2 w-full bg-gray-800 rounded-sm">
-          <div class="w-full flex flex-col p-1">
-            <span class="text-md font-medium">Pete Tongs Essential Collection</span>
+        <div class="flex p-3 w-full bg-spotify-bg-tertiary rounded-lg border border-spotify-border hover:border-spotify-text-secondary transition">
+          <div class="w-full flex flex-col p-2">
+            <span class="text-md font-semibold text-spotify-text-primary">Pete Tongs Essential Collection</span>
             <div class="flex p-1 gap-2">
-              <span class="text-sm font-light">BBC Radio 1</span>
-              <span class="text-sm font-light">11/08/2025</span>
+              <span class="text-sm text-spotify-text-secondary">BBC Radio 1</span>
+              <span class="text-sm text-spotify-text-secondary">11/08/2025</span>
             </div>
           </div>
-          <div class="flex items-center">Play</div>
+          <div class="flex items-center text-spotify-green">Play</div>
         </div>
-        <span>(8) More Recordings</span>
+        <span class="text-xs text-spotify-text-secondary">(8) More Recordings</span>
       </div>
 
       <div>
-        <div class="flex flex-col bg-gray-900 gap-2 p-1">
+        <div class="flex flex-col bg-spotify-bg-secondary gap-2 p-3 border border-spotify-border rounded-lg">
             <div class="flex justify-between">
-                <span>Upcoming Recordings</span>
-                <span>filter</span>
+                <span class="font-semibold text-spotify-text-primary">Upcoming Recordings</span>
+                <span class="text-spotify-text-secondary text-sm">filter</span>
             </div>
-            <div class="w-full flex p-2 bg-gray-800 rounded-sm">
-              <div class="w-full flex p-1 justify-between">
-                <span>Pete Tongs Essential Collection</span>
-                <span>11/14/25 - 6:00 PM CST</span>
+            <div class="w-full flex p-3 bg-spotify-bg-tertiary rounded-lg border border-spotify-border hover:border-spotify-text-secondary transition">
+              <div class="w-full flex p-2 justify-between">
+                <span class="text-spotify-text-primary font-medium">Pete Tongs Essential Collection</span>
+                <span class="text-spotify-text-secondary text-sm">11/14/25 - 6:00 PM CST</span>
 
               </div>
             </div>

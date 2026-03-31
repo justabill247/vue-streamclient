@@ -3,50 +3,50 @@
     <div v-if="loading">Loading...</div>
     <div v-else>
       <!-- Header -->
-      <div class="flex gap-2 items-center">
-        <router-link to="/streams" class="text-white w-8 h-8 mr-2">
-          <ArrowLeftIcon />
+      <div class="flex gap-2 items-center mb-6">
+        <router-link to="/streams" class="text-spotify-text-primary hover:text-spotify-green transition p-1" title="Back">
+          <ArrowLeftIcon class="w-6 h-6" />
         </router-link>
         <img
           v-if="stream.logo_url"
           :src="getFullUrl(stream.logo_url)"
           alt="Logo"
-          class="flex w-8 h-8 object-cover rounded-md border"
+          class="w-12 h-12 object-cover rounded-md border border-spotify-border"
         />
-        <h1 class="text-2xl font-bold">{{ stream.name }}</h1>
+        <h1 class="text-2xl font-bold text-spotify-text-primary">{{ stream.name }}</h1>
         
-        <CheckIcon v-if="editing" class="w-5 h-5 text-gray-400" @click="updateStream(stream.id)"/>
-        <PencilIcon v-else class="w-5 h-5 text-gray-400" @click="editSttream"/>
+        <CheckIcon v-if="editing" class="w-5 h-5 text-spotify-green cursor-pointer transition hover:text-spotify-green-bright" @click="updateStream(stream.id)"/>
+        <PencilIcon v-else class="w-5 h-5 text-spotify-text-secondary cursor-pointer transition hover:text-spotify-text-primary" @click="editSttream"/>
       </div>
 
       <!-- Edit Stream Info -->
       <div v-if="editing">
-        <form @submit.prevent="updateStream" class="bg-gray-900 p-4 rounded-lg space-y-3">
+        <form @submit.prevent="updateStream" class="bg-spotify-bg-secondary p-4 rounded-lg space-y-3 border border-spotify-border">
           <div class="mb-3">
-            <label for="name" class="block text-sm font-medium text-gray-200"
+            <label for="name" class="block text-sm font-semibold text-spotify-text-primary"
               >Name</label
             >
             <input
               v-model="stream.name"
               id="name"
               type="text"
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              class="mt-1 block w-full px-3 py-2 bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border rounded-lg shadow-sm focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green"
             />
           </div>
 
           <div class="mb-3">
-            <label for="url">Stream URL</label>
+            <label for="url" class="block text-sm font-semibold text-spotify-text-primary">Stream URL</label>
             <input
               v-model="stream.url"
               id="url"
               type="text"
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              class="mt-1 block w-full px-3 py-2 bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border rounded-lg shadow-sm focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green"
             />
           </div>
 
           <!-- Logo Upload -->
           <div class="mb-3">
-            <label class="block text-sm font-medium text-gray-200 mb-2">Logo</label>
+            <label class="block text-sm font-semibold text-spotify-text-primary mb-2">Logo</label>
             <div class="space-y-2">
               <div class="flex gap-3">
                 <input
@@ -56,14 +56,14 @@
                   accept="image/*"
                   @change="onFileChange"
                 />
-                <label for="logoUpload" class="bg-blue-800 hover:bg-blue-700 text-white px-4 py-2 rounded-sm cursor-pointer transition">
+                <label for="logoUpload" class="bg-spotify-green hover:bg-spotify-green-bright text-black px-4 py-2 rounded-lg cursor-pointer transition font-semibold active:scale-95">
                   Choose Logo
                 </label>
                 <img
                   v-if="preview"
                   :src="preview"
                   alt="New logo preview"
-                  class="w-12 h-12 rounded-sm object-cover border border-gray-500"
+                  class="w-12 h-12 rounded-md object-cover border border-spotify-border"
                 />
               </div>
               <div v-if="uploadError" class="text-red-500 text-sm">{{ uploadError }}</div>
@@ -73,25 +73,25 @@
       </div>
       <!-- Recordings List -->
       <div>
-        <h2 class="text-xl font-bold mb-2 mt-4">Recordings</h2>
-        <div v-if="!stream.recordings || stream.recordings.length === 0" class="text-gray-400">
+        <h2 class="text-2xl font-bold mb-4 mt-6 text-spotify-text-primary">Recordings</h2>
+        <div v-if="!stream.recordings || stream.recordings.length === 0" class="text-spotify-text-secondary">
           <p>No recordings yet</p>
         </div>
         <div
           v-for="rec in stream.recordings"
           :key="rec.id"
-          class="p-3 bg-gray-900 rounded-lg mb-3"
+          class="p-3 bg-spotify-bg-card hover:bg-spotify-bg-tertiary rounded-lg mb-3 border border-spotify-border hover:border-spotify-text-secondary transition"
         >
-          <div class="font-semibold">{{ rec.name }}</div>
-          <div class="text-sm text-gray-400">
+          <div class="font-semibold text-spotify-text-primary">{{ rec.name }}</div>
+          <div class="text-sm text-spotify-text-secondary">
             {{ new Date(rec.start_time).toLocaleString() }}
           </div>
-          <div v-if="rec.duration" class="text-sm text-gray-500">
+          <div v-if="rec.duration" class="text-sm text-spotify-text-disabled">
             Duration: {{ Math.floor(rec.duration / 60) }}m {{ rec.duration % 60 }}s
           </div>
           <button 
             v-if="rec.file_path"
-            class="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition"
+            class="mt-2 bg-spotify-green hover:bg-spotify-green-bright text-black px-3 py-1 rounded-lg text-sm transition font-semibold active:scale-95"
             @click="playRecording(rec)"
           >
             Play

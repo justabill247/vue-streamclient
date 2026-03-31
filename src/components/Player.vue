@@ -1,20 +1,20 @@
 <template>
   <div
-    class="bg-gray-900 text-white px-4 py-2 flex items-center justify-between shadow-md rounded-t-md bottom-18"
+    class="bg-spotify-bg-secondary text-spotify-text-primary px-4 py-3 flex items-center justify-between shadow-lg rounded-t-lg bottom-18 border-t border-spotify-border"
   >
     <!-- Track Info -->
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 flex-1">
       <img
         v-if="currentTrack?.logo_url"
         :src="getFullUrl(currentTrack?.logo_url)"
         alt="Cover"
-        class="w-12 h-12 rounded-sm object-cover"
+        class="w-12 h-12 rounded-md object-cover"
       />
-      <div class="flex flex-col">
-        <span class="font-semibold truncate max-w-xs">
+      <div class="flex flex-col min-w-0">
+        <span class="font-semibold truncate text-spotify-text-primary">
           {{ currentTrack?.name || "Nothing playing" }}
         </span>
-        <span class="text-gray-400 text-xs truncate max-w-xs">
+        <span class="text-spotify-text-secondary text-xs truncate">
           {{ currentTrack?.description || "" }}
         </span>
       </div>
@@ -24,7 +24,7 @@
     <div class="flex items-center gap-4">
       <button
         @click="togglePlay"
-        class="text-white text-2xl hover:text-gray-300 transition"
+        class="text-spotify-text-primary hover:text-spotify-green transition active:scale-95 p-1"
       >
         <PlayIcon v-if="!isPlaying" class="w-6 h-6" />
         <StopIcon v-else class="w-6 h-6" />
@@ -33,12 +33,12 @@
       <div v-if="currentTrack" class="flex items-center gap-3">
         <div
           v-if="isLiveStream"
-          class="text-red-600 text-xs font-bold flex items-center gap-1"
+          class="flex items-center gap-2 text-xs font-bold"
         >
-          <span class="text-gray-400">{{ formatTime(currentTime)}}</span>
-          LIVE
+          <span class="text-spotify-text-secondary">{{ formatTime(currentTime)}}</span>
+          <span class="bg-red-600 text-white px-2 py-1 rounded font-bold">LIVE</span>
         </div>
-        <span v-else class="text-xs text-gray-400 whitespace-nowrap">
+        <span v-else class="text-xs text-spotify-text-secondary whitespace-nowrap">
           {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
         </span>
 
@@ -46,7 +46,7 @@
         <div class="relative">
           <button
             @click="showVolumeControl = !showVolumeControl"
-            class="text-gray-400 hover:text-white transition"
+            class="text-spotify-text-secondary hover:text-spotify-text-primary transition p-1"
             title="Volume"
           >
             <SpeakerXMarkIcon v-if="volume === 0" class="w-5 h-5" />
@@ -58,7 +58,7 @@
           <!-- Volume Slider Popup -->
           <div
             v-if="showVolumeControl"
-            class="absolute bottom-full right-0 mb-2 bg-gray-800 rounded-lg p-3 flex flex-col items-center gap-2 border border-gray-700"
+            class="absolute bottom-full right-0 mb-3 bg-spotify-bg-tertiary rounded-lg p-3 flex flex-col items-center gap-2 border border-spotify-border shadow-lg"
           >
             <input
               v-model.number="volume"
@@ -69,7 +69,7 @@
               class="volume-slider"
               title="Volume slider"
             />
-            <span class="text-xs text-gray-400 w-8 text-center"
+            <span class="text-xs text-spotify-text-secondary w-8 text-center"
               >{{ volume }}%</span
             >
           </div>
@@ -79,9 +79,9 @@
   </div>
 
   <!-- Progress Bar -->
-  <div v-if="currentTrack" class="h-1 bg-gray-700">
+  <div v-if="currentTrack" class="h-1 bg-spotify-border">
     <div
-      class="h-1 bg-green-500 transition-all duration-200"
+      class="h-1 bg-spotify-green transition-all duration-200"
       :style="{ width: progress + '%' }"
     ></div>
   </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen bg-spotify-gray">
+  <div class="flex flex-col h-screen bg-spotify-bg-primary">
     
     <!-- Main Content -->
      <main class="flex-1 overflow-y-auto pb-36">
@@ -14,16 +14,16 @@
   
 
     <!-- Bottom Nav -->
-    <nav class="fixed bottom-0 left-0 right-0 h-18 bg-black flex justify-around items-center text-gray-400 border-t border-gray-800 z-50">
-      <router-link to="/" class="flex flex-col items-center h-full p-2">
+    <nav class="fixed bottom-0 left-0 right-0 h-18 bg-black flex justify-around items-center text-spotify-text-secondary border-t border-spotify-border z-50">
+      <router-link to="/" class="flex flex-col items-center h-full p-2 hover:text-white transition">
         <HomeIcon />
         <span class="text-xs mt-1">Home</span>
       </router-link>      
-      <router-link to="/streams" class="flex flex-col items-center h-full p-2">
+      <router-link to="/streams" class="flex flex-col items-center h-full p-2 hover:text-white transition">
         <RadioIcon />
         <span class="text-xs mt-1">Streams</span>
       </router-link>
-      <router-link to="/recordings" class="flex flex-col items-center h-full p-2 relative">
+      <router-link to="/recordings" class="flex flex-col items-center h-full p-2 relative hover:text-white transition">
         <CircleStackIcon />
         <span class="text-xs mt-1">Recordings</span>
         <!-- Recording Badge with Pulsing Animation -->
@@ -35,16 +35,16 @@
         </div>
         <div 
           v-else
-          class="absolute top-1 right-1 bg-gray-600 text-gray-300 text-xs font-bold px-1.5 py-0.5 rounded text-xs"
+          class="absolute top-1 right-1 bg-spotify-bg-card text-spotify-text-disabled text-xs font-bold px-1.5 py-0.5 rounded"
         >
           Idle
         </div>
       </router-link>
-      <router-link to="/schedule" class="flex flex-col items-center h-full p-2">
+      <router-link to="/schedule" class="flex flex-col items-center h-full p-2 hover:text-white transition">
         <CalendarDaysIcon />
         <span class="text-xs mt-1">Schedule</span>
       </router-link>
-      <router-link to="/settings" class="flex flex-col items-center h-full p-2">
+      <router-link to="/settings" class="flex flex-col items-center h-full p-2 hover:text-white transition">
                 <Cog6ToothIcon />
         <span class="text-xs mt-1">Settings</span>
       </router-link>

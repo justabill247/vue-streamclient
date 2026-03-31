@@ -1,22 +1,22 @@
 <template>
   <div class="p-4 space-y-3">
     <div class="flex justify-between items-center mb-3">
-      <h1 class="text-xl font-semibold">Recordings</h1>
+      <h1 class="text-2xl font-bold text-spotify-text-primary">Recordings</h1>
       <button
         @click="showRecordModal = true"
-        class="bg-red-600 hover:bg-red-700 border border-gray-500 text-white font-semibold px-4 py-2 rounded-full transition flex items-center gap-2"
+        class="bg-red-600 hover:bg-red-700 border border-gray-600 text-white font-semibold px-4 py-2 rounded-full transition flex items-center gap-2 active:scale-95"
         title="Record Now"
       >
-        
+        <StopIcon class="w-5 h-5" />
         Record Now
       </button>
     </div>
 
-    <div v-if="loading" class="text-gray-400 text-center py-10">
+    <div v-if="loading" class="text-spotify-text-secondary text-center py-10">
       Loading recordings...
     </div>
 
-    <div v-else-if="recordings.length === 0" class="text-gray-400 text-center py-10">
+    <div v-else-if="recordings.length === 0" class="text-spotify-text-secondary text-center py-10">
       No recordings found.
     </div>
 
@@ -24,18 +24,18 @@
       <div
         v-for="rec in recordings"
         :key="rec.id"
-        class="bg-gray-800 rounded-xl p-3 flex items-center justify-between"
+        class="bg-spotify-bg-card hover:bg-spotify-bg-tertiary rounded-lg p-4 flex items-center justify-between transition border border-spotify-border hover:border-spotify-text-secondary group"
       >
         <div class="flex flex-col overflow-hidden">
-          <span class="font-semibold truncate">{{ rec.name }}</span>
-          <span class="text-xs text-gray-400 truncate">{{ rec.stream_name }}</span>
-          <span class="text-xs text-gray-400 truncate">{{ formatDate(rec.start_time) }} for {{formatDuration(rec.duration)}}</span>
+          <span class="font-semibold text-spotify-text-primary truncate">{{ rec.name }}</span>
+          <span class="text-xs text-spotify-text-secondary truncate">{{ rec.stream_name }}</span>
+          <span class="text-xs text-spotify-text-secondary truncate">{{ formatDate(rec.start_time) }} for {{formatDuration(rec.duration)}}</span>
         </div>
 
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition">
           <button
             @click="playRecording(rec)"
-            class="text-spotify-green hover:text-green-400 transition"
+            class="text-spotify-green hover:text-spotify-green-bright transition p-2"
             title="Play recording"
           >
             <PlayIcon class="w-5 h-5" />
@@ -43,7 +43,7 @@
 
           <button
             @click="downloadRecording(rec)"
-            class="text-gray-400 hover:text-white transition"
+            class="text-spotify-text-secondary hover:text-spotify-text-primary transition p-2"
             title="Download"
           >
             <ArrowDownTrayIcon class="w-5 h-5" />
@@ -51,7 +51,7 @@
 
           <button
             @click="deleteRecording(rec)"
-            class="text-gray-400 hover:text-red-500 transition"
+            class="text-spotify-text-secondary hover:text-red-500 transition p-2"
             title="Delete"
           >
             <TrashIcon class="w-5 h-5" />
@@ -64,22 +64,22 @@
     <transition name="modal">
       <div
         v-if="showRecordModal"
-        class="fixed inset-0 bg-black opacity-90 flex items-center justify-center z-50"
+        class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
       >
-        <div class="bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-700 max-w-md w-full">
-          <h2 class="text-2xl font-bold mb-4 text-white">Record Now</h2>
+        <div class="bg-spotify-bg-secondary p-6 rounded-lg shadow-lg border border-spotify-border max-w-md w-full">
+          <h2 class="text-2xl font-bold mb-6 text-spotify-text-primary">Record Now</h2>
 
           <!-- Stream Selection -->
-          <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-300 mb-2">Stream</label>
-            <div class="flex gap-2 mb-3">
+          <div class="mb-6">
+            <label class="block text-sm font-semibold text-spotify-text-primary mb-3">Stream</label>
+            <div class="flex gap-2 mb-4">
               <button
                 @click="recordForm.mode = 'preset'"
                 :class="[
                   'flex-1 py-2 rounded-lg font-medium transition',
                   recordForm.mode === 'preset'
                     ? 'bg-spotify-green text-black'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-spotify-bg-tertiary text-spotify-text-secondary hover:bg-spotify-bg-card'
                 ]"
               >
                 From List
@@ -90,7 +90,7 @@
                   'flex-1 py-2 rounded-lg font-medium transition',
                   recordForm.mode === 'custom'
                     ? 'bg-spotify-green text-black'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-spotify-bg-tertiary text-spotify-text-secondary hover:bg-spotify-bg-card'
                 ]"
               >
                 Custom URL
@@ -101,11 +101,11 @@
             <select
               v-if="recordForm.mode === 'preset'"
               v-model.number="recordForm.streamId"
-              class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg p-2 mb-4"
+              class="w-full bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border rounded-lg p-3 mb-4 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green"
               required
             >
-              <option value="">Select a stream...</option>
-              <option v-for="s in allStreams" :key="s.id" :value="s.id">
+              <option value="" class="bg-spotify-bg-secondary">Select a stream...</option>
+              <option v-for="s in allStreams" :key="s.id" :value="s.id" class="bg-spotify-bg-secondary">
                 {{ s.name }}
               </option>
             </select>
@@ -116,24 +116,24 @@
               v-model="recordForm.customUrl"
               type="url"
               placeholder="Enter stream URL (e.g., https://example.com/stream)"
-              class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg p-2 mb-4"
+              class="w-full bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border rounded-lg p-3 mb-4 placeholder-spotify-text-disabled focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green"
               required
             />
           </div>
 
           <!-- Duration Input -->
           <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-300 mb-2">Duration (seconds)</label>
+            <label class="block text-sm font-semibold text-spotify-text-primary mb-3">Duration (seconds)</label>
             <input
               v-model.number="recordForm.duration"
               type="number"
               min="1"
               max="3600"
               placeholder="300"
-              class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg p-2"
+              class="w-full bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border rounded-lg p-3 placeholder-spotify-text-disabled focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green"
               required
             />
-            <p class="text-xs text-gray-400 mt-1">Max 1 hour (3600 seconds)</p>
+            <p class="text-xs text-spotify-text-secondary mt-2">Max 1 hour (3600 seconds)</p>
           </div>
 
           <!-- Buttons -->
@@ -141,14 +141,16 @@
             <button
               @click="startRecording"
               :disabled="isRecording"
-              class="flex-1 bg-spotify-green hover:bg-green-600 disabled:bg-gray-600 text-black font-semibold py-2 rounded-lg transition"
+              class="flex-1 text-black font-semibold py-2 rounded-lg transition active:scale-95 disabled:bg-spotify-bg-card disabled:text-spotify-text-disabled cursor-disabled"
+              style="background-color: #1DB954"
+              :style="{ backgroundColor: isRecording ? '#404040' : '#1DB954', color: isRecording ? '#b3b3b3' : 'black' }"
             >
               {{ isRecording ? "Recording..." : "Start Recording" }}
             </button>
             <button
               @click="showRecordModal = false"
               :disabled="isRecording"
-              class="flex-1 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-600 text-white font-semibold py-2 rounded-lg transition"
+              class="flex-1 bg-spotify-bg-tertiary hover:bg-spotify-bg-card disabled:bg-spotify-bg-card text-spotify-text-primary disabled:text-spotify-text-secondary font-semibold py-2 rounded-lg transition active:scale-95 border border-spotify-border"
             >
               Cancel
             </button>

@@ -3,14 +3,14 @@
     <div v-if="loading">Loading...</div>
     <div v-else>
       <!-- Title -->
-      <div class="flex justify-between items-center">
-        <router-link to="/schedule" class="text-white w-8 h-8">
-          <ArrowLeftIcon />
+      <div class="flex justify-between items-center mb-6">
+        <router-link to="/schedule" class="text-spotify-text-primary hover:text-spotify-green transition p-1" title="Back">
+          <ArrowLeftIcon class="w-6 h-6" />
         </router-link>
-        <h1 class="flex items-center text-2xl font-bold ml-4 w-full">{{ schedule.name }}</h1>
+        <h1 class="flex items-center text-2xl font-bold text-spotify-text-primary flex-1 mx-4">{{ schedule.name }}</h1>
         <button
           @click="showDeleteDialog = true"
-          class="bg-red-600 p-2 rounded-sm"
+          class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition active:scale-95"
         >
           Delete Schedule
         </button>
@@ -19,44 +19,44 @@
       <!-- Stream Info -->
       <div
         v-if="schedule.stream"
-        class="flex items-center mb-6 p-4 bg-gray-800 rounded-lg"
+        class="flex items-center mb-6 p-4 bg-spotify-bg-card rounded-lg border border-spotify-border hover:border-spotify-text-secondary transition"
       >
         <img
           :src="getFullUrl(schedule.stream.logo_url)"
           alt="logo"
-          class="w-14 h-14 rounded mr-4"
+          class="w-16 h-16 rounded-md mr-4 border border-spotify-border"
         />
         <div>
-          <div class="text-lg font-semibold">{{ schedule.stream.name }}</div>
+          <div class="text-lg font-semibold text-spotify-text-primary">{{ schedule.stream.name }}</div>
         </div>
       </div>
 
       <!-- Schedule Details -->
-      <div class="mb-6">
-        <p><strong>Cron</strong> {{ schedule.cron }}</p>
-        <p><strong>Duration</strong> {{ schedule.duration }}</p>
+      <div class="mb-6 bg-spotify-bg-card p-4 rounded-lg border border-spotify-border">
+        <p class="text-spotify-text-primary mb-2"><strong>Cron:</strong> <code class="text-spotify-text-secondary">{{ schedule.cron }}</code></p>
+        <p class="text-spotify-text-primary"><strong>Duration:</strong> <span class="text-spotify-text-secondary">{{ schedule.duration }}</span></p>
       </div>
 
       <!-- Recordings List -->
-      <h2 class="text-xl font-bold mb-2">Recordings</h2>
+      <h2 class="text-2xl font-bold mb-4 text-spotify-text-primary">Recordings</h2>
       <div v-if="!schedule.recordings || schedule.recordings.length === 0">
-        <p class="text-gray-400">No recordings yet</p>
+        <p class="text-spotify-text-secondary">No recordings yet</p>
       </div>
       <div
         v-for="rec in schedule.recordings"
         :key="rec.id"
-        class="p-3 bg-gray-900 rounded-lg mb-3"
+        class="p-3 bg-spotify-bg-card hover:bg-spotify-bg-tertiary rounded-lg mb-3 border border-spotify-border hover:border-spotify-text-secondary transition"
       >
-        <div class="font-semibold">{{ rec.name }}</div>
-        <div class="text-sm text-gray-400">
+        <div class="font-semibold text-spotify-text-primary">{{ rec.name }}</div>
+        <div class="text-sm text-spotify-text-secondary">
           {{ new Date(rec.start_time).toLocaleString() }}
         </div>
-        <div v-if="rec.duration" class="text-sm text-gray-500">
+        <div v-if="rec.duration" class="text-sm text-spotify-text-disabled">
           Duration: {{ Math.floor(rec.duration / 60) }}m {{ rec.duration % 60 }}s
         </div>
         <button 
           v-if="rec.file_path"
-          class="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition"
+          class="mt-2 bg-spotify-green hover:bg-spotify-green-bright text-black px-3 py-1 rounded-lg text-sm transition font-semibold active:scale-95"
           @click="playRecording(rec)"
         >
           Play
@@ -67,29 +67,31 @@
       <transition name="modal">
         <div
           v-if="showDeleteDialog"
-          class="fixed inset-0 bg-black opacity-50 flex items-center justify-center"
+          class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
         >
-          <div class="bg-white p-4 rounded-lg shadow-lg">
-            <h2 class="text-xl font-bold mb-3">Confirm Delete</h2>
-            <p>Are you sure you want to delete this schedule?</p>
-            <button
-              @click="deleteSchedule(schedule.id, false)"
-              class="bg-green-600 p-2 rounded-sm mr-2"
-            >
-              Keep Recordings
-            </button>
-            <button
-              @click="deleteSchedule(schedule.id, true)"
-              class="bg-red-600 p-2 rounded-sm"
-            >
-              Delete Recordings
-            </button>
-            <button
-              @click="showDeleteDialog = false"
-              class="bg-gray-300 p-2 rounded-sm ml-2"
-            >
-              Cancel
-            </button>
+          <div class="bg-spotify-bg-secondary p-6 rounded-lg shadow-lg border border-spotify-border max-w-md w-full">
+            <h2 class="text-2xl font-bold mb-4 text-spotify-text-primary">Confirm Delete</h2>
+            <p class="text-spotify-text-secondary mb-6">Are you sure you want to delete this schedule?</p>
+            <div class="flex gap-3">
+              <button
+                @click="deleteSchedule(schedule.id, false)"
+                class="flex-1 bg-spotify-green hover:bg-spotify-green-bright text-black px-4 py-2 rounded-lg font-semibold transition active:scale-95"
+              >
+                Keep Recordings
+              </button>
+              <button
+                @click="deleteSchedule(schedule.id, true)"
+                class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition active:scale-95"
+              >
+                Delete Recordings
+              </button>
+              <button
+                @click="showDeleteDialog = false"
+                class="flex-1 bg-spotify-bg-tertiary hover:bg-spotify-bg-card text-spotify-text-primary px-4 py-2 rounded-lg font-semibold transition border border-spotify-border active:scale-95"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       </transition>

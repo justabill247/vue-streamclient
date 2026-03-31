@@ -1,33 +1,33 @@
 <template>
-  <div class="p-4 space-y-2">
+  <div class="p-4 space-y-3">
     <div class="w-full flex justify-between items-center">
-      <h1 class="text-xl font-semibold">Streams</h1>
-      <router-link to="/add-stream" class="text-white w-8 h-8">
-        <PlusIcon />
+      <h1 class="text-2xl font-bold text-spotify-text-primary">Streams</h1>
+      <router-link to="/add-stream" class="text-spotify-text-primary hover:text-spotify-green transition p-1" title="Add stream">
+        <PlusIcon class="w-6 h-6" />
       </router-link>
     </div>
 
     <div
       v-for="stream in store.streams"
       :key="stream.id"
-      class="bg-gray-800 rounded-lg p-2 flex justify-between items-center"
+      class="bg-spotify-bg-card hover:bg-spotify-bg-tertiary rounded-lg p-3 flex justify-between items-center transition border border-spotify-border hover:border-spotify-text-secondary cursor-pointer group"
       @click.stop="goToStreamDetails(stream.id)"
     >
-      <div class="flex gap-4 items-center">
+      <div class="flex gap-4 items-center flex-1">
         <img
           v-if="stream.logo_url"
           :src="getFullUrl(stream.logo_url)"
           alt="Logo"
-          class="w-10 h-10 object-cover rounded-md border"
+          class="w-12 h-12 object-cover rounded-md border border-spotify-border"
         />
         <div class="flex flex-col">
-          <span class="text-lg">{{ stream.name }}</span>
+          <span class="text-lg font-semibold text-spotify-text-primary">{{ stream.name }}</span>
         </div>
       </div>
 
-      <div class="flex text-gray-300 gap-3">
-        <button @click.stop="playStream(stream)" class="text-spotify-green text-lg hover:text-green-400 transition">
-          <PlayIcon class="h-6 w-6" />
+      <div class="flex text-spotify-text-secondary gap-2 opacity-0 group-hover:opacity-100 transition">
+        <button @click.stop="playStream(stream)" class="text-spotify-green hover:text-spotify-green-bright transition p-2" title="Play">
+          <PlayIcon class="h-5 w-5" />
         </button>
       </div>
     </div>

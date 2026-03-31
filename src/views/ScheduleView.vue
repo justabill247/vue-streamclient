@@ -1,37 +1,36 @@
 <template>
-  <div class="p-4 space-y-2">
+  <div class="p-4 space-y-3">
     <div class="w-full flex justify-between items-center">
-      <h1 class="text-2xl font-semibold">Schedule</h1>
-      <router-link to="/add-schedule" class="text-white w-8 h-8">
-        <PlusIcon />
+      <h1 class="text-2xl font-bold text-spotify-text-primary">Schedule</h1>
+      <router-link to="/add-schedule" class="text-spotify-text-primary hover:text-spotify-green transition p-1" title="Add schedule">
+        <PlusIcon class="w-6 h-6" />
       </router-link>
     </div>
 
     <div
       v-for="s in schedules"
       :key="s.name"
-      class="bg-gray-800 rounded-lg p-3 flex justify-between items-center"
+      class="bg-spotify-bg-card hover:bg-spotify-bg-tertiary rounded-lg p-3 flex justify-between items-center transition border border-spotify-border hover:border-spotify-text-secondary cursor-pointer group"
       @click="onScheduleClick(s.id)"
     >
-      <div class="flex items-center" >
+      <div class="flex items-center gap-3 flex-1">
         <img
           v-if="s.stream.logo_url"
           :src="getFullUrl(s.stream.logo_url)"
           alt="Logo"
-          class="w-10 h-10 object-cover rounded-md border"
+          class="w-12 h-12 object-cover rounded-md border border-spotify-border"
         />
 
-        <div class="flex flex-col ml-3">
-          <div class="font-bold">{{ s.name }}</div>
-        </div>
-
-        <div class="text-xs text-gray-400">
-          {{ s.url }}
+        <div class="flex flex-col">
+          <div class="font-semibold text-spotify-text-primary">{{ s.name }}</div>
+          <div class="text-xs text-spotify-text-secondary truncate">
+            {{ s.url }}
+          </div>
         </div>
       </div>
-      <div class="flex flex-col">
-       <span class="text-gray-400">{{ cronstrue.toString(s.cron) }}</span>
-       <span class="text-gray-500">for {{formatTimeHrsMins(s.duration) }}</span> 
+      <div class="flex flex-col text-right">
+       <span class="text-spotify-text-secondary text-sm">{{ cronstrue.toString(s.cron) }}</span>
+       <span class="text-spotify-text-disabled text-xs">for {{formatTimeHrsMins(s.duration) }}</span> 
       </div>
       
     </div>
