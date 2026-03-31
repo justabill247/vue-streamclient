@@ -11,6 +11,13 @@ export const usePlayerStore = defineStore("player", () => {
     console.log("playing", track.url)
     currentTrack.value = track;
     isPlaying.value = true;
+    console.log('isPlaying is', isPlaying)
+  }
+
+  function playStream(stream) {
+    console.log("playing stream", stream.url)
+    currentTrack.value = stream;
+    isPlaying.value = true;
   }
 
   function pause() {
@@ -23,6 +30,7 @@ export const usePlayerStore = defineStore("player", () => {
 
   function setPlaying(playing) {
     isPlaying.value = playing;
+    console.log('playing status', playing)
   }
 
   return {

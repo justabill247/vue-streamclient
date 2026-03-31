@@ -4,7 +4,7 @@
     <div class="flex items-center gap-3">
       <img
         v-if="currentTrack?.logo_url"
-        :src="currentTrack.logo_url"
+        :src="getFullUrl(currentTrack?.logo_url)"
         alt="Cover"
         class="w-12 h-12 rounded-sm object-cover"
       />
@@ -24,6 +24,9 @@
         <PlayIcon v-if="!isPlaying" class="w-6 h-6"/>
         <PauseIcon v-else class="w-6 h-6"/>
       </button>
+      <span v-if="currentTrack" class="text-xs text-gray-400 whitespace-nowrap">
+        {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
+      </span>
     </div>
   </div>
 
@@ -48,33 +51,44 @@
 import { ref, watch, computed, nextTick } from "vue";
 import { usePlayerStore } from "../stores/player";
 import { PlayIcon, PauseIcon } from "@heroicons/vue/24/outline";
+import { getFullUrl } from "../utils/api";
 
 const playerStore = usePlayerStore();
 const audioEl = ref(null);
 const progress = ref(0);
+const currentTime = ref(0);
+const duration = ref(0);
 
 const currentTrack = computed(() => playerStore.currentTrack);
 const isPlaying = computed(() => playerStore.isPlaying);
 
+const formatTime = (seconds) => {
+  if (!seconds || isNaN(seconds)) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+};
+
 const togglePlay = () => {
   if (!currentTrack.value) return;
-  if (playerStore.isPlaying) {
-    audioEl.value.pause();
-    playerStore.setPlaying(false);
-  } else {
+  if (audioEl.value.paused) {
     audioEl.value.play();
-    playerStore.setPlaying(true);
+  } else {
+    audioEl.value.pause();
   }
 };
 
 const updateProgress = () => {
   if (!audioEl.value) return;
+  currentTime.value = audioEl.value.currentTime;
+  duration.value = audioEl.value.duration;
   progress.value = (audioEl.value.currentTime / audioEl.value.duration) * 100;
 };
 
 const onEnded = () => {
   playerStore.setPlaying(false);
   progress.value = 0;
+  currentTime.value = 0;
 };
 
 // watch for changes to current track

@@ -45,23 +45,26 @@
       <!-- Logo -->
       <div>
         <label class="block text-sm font-medium mb-1">Logo</label>
-        <div class="flex">
-          <input
-            id="fileUpload"
-            class="hidden"
-            type="file"
-            accept="image/*"
-            @change="onFileChange"
-          />
-          <label for="fileUpload" class="bg-blue-800 text-white px-4 py-2 rounded-sm">
-            Upload File
-          </label>
-          <img
-            v-if="preview"
-            :src="preview"
-            alt="Logo preview"
-            class="w-20 h-20 mt-2 rounded-sm object-cover"
-          />
+        <div class="space-y-2">
+          <div class="flex gap-3">
+            <input
+              id="fileUpload"
+              class="hidden"
+              type="file"
+              accept="image/*"
+              @change="onFileChange"
+            />
+            <label for="fileUpload" class="bg-blue-800 hover:bg-blue-700 text-white px-4 py-2 rounded-sm cursor-pointer transition">
+              Upload File
+            </label>
+            <img
+              v-if="preview"
+              :src="preview"
+              alt="Logo preview"
+              class="w-20 h-20 rounded-sm object-cover border border-gray-600"
+            />
+          </div>
+          <div v-if="uploadError" class="text-red-500 text-sm">{{ uploadError }}</div>
         </div>
       </div>
 
@@ -79,12 +82,12 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { ref } from "vue";
 import { ArrowLeftIcon } from "@heroicons/vue/24/outline";
+import { useLogoUpload } from "../composables/useLogoUpload";
 
 const message = ref("");
-const preview = ref(null);
-const selectedFile = ref(null);
+const { preview, selectedFile, uploadError, onFileChange, clearPreview, appendLogoToFormData } = useLogoUpload();
 
 const form = ref({
   name: "",
@@ -92,17 +95,14 @@ const form = ref({
   description: "",
 });
 
-const onFileChange = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    selectedFile.value = file;
-    preview.value = URL.createObjectURL(file);
-  }
-};
-
 async function submitForm() {
   if (!form.value.name || !form.value.url) {
     alert("You must provide a name and URL.");
+    return;
+  }
+
+  if (uploadError.value) {
+    alert("Please fix upload error: " + uploadError.value);
     return;
   }
 
@@ -111,14 +111,12 @@ async function submitForm() {
   data.append("name", form.value.name);
   data.append("url", form.value.url);
   data.append("description", form.value.description);
-  if (selectedFile.value) {
-    data.append("logo", selectedFile.value);
-  }
+  appendLogoToFormData(data);
 
   try {
     const res = await fetch("/api/streams", {
       method: "POST",
-      body: data, // ✅ correct variable
+      body: data,
     });
 
     if (!res.ok) {
@@ -131,8 +129,7 @@ async function submitForm() {
 
     // Reset form
     form.value = { name: "", url: "", description: "" };
-    selectedFile.value = null;
-    preview.value = null;
+    clearPreview();
   } catch (err) {
     console.error("Error adding stream:", err);
     alert("Error adding stream: " + err.message);

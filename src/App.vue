@@ -23,9 +23,22 @@
         <RadioIcon />
         <span class="text-xs mt-1">Streams</span>
       </router-link>
-      <router-link to="/recordings" class="flex flex-col items-center h-full p-2">
+      <router-link to="/recordings" class="flex flex-col items-center h-full p-2 relative">
         <CircleStackIcon />
         <span class="text-xs mt-1">Recordings</span>
+        <!-- Recording Badge with Pulsing Animation -->
+        <div 
+          v-if="activeRecordingCount > 0"
+          class="badge-recording"
+        >
+          {{ activeRecordingCount }}
+        </div>
+        <div 
+          v-else
+          class="absolute top-1 right-1 bg-gray-600 text-gray-300 text-xs font-bold px-1.5 py-0.5 rounded text-xs"
+        >
+          Idle
+        </div>
       </router-link>
       <router-link to="/schedule" class="flex flex-col items-center h-full p-2">
         <CalendarDaysIcon />
@@ -42,15 +55,45 @@
 <script setup>
 import { useStreamStore } from "./stores/streams";
 import { usePlayerStore } from "./stores/player";
+import { useRecordingStatus } from "./composables/useRecordingStatus";
 import Player from "./components/Player.vue";
 import { RadioIcon, CircleStackIcon, CalendarDaysIcon, Cog6ToothIcon, PlayIcon, PauseIcon, HomeIcon } from "@heroicons/vue/24/outline";
+
 const streamStore = useStreamStore();
 const playerStore = usePlayerStore();
-
+const { activeRecordingCount } = useRecordingStatus();
 </script>
 
 <style scoped>
 nav a.router-link-active {
   color: white;
+}
+
+.badge-recording {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: rgb(220, 38, 38);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulseBadge 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulseBadge {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
 }
 </style>

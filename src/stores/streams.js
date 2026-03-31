@@ -12,7 +12,11 @@ export const useStreamStore = defineStore("streams", {
     async fetchStreams() {
       const res = await fetch("/api/streams");
       this.streams = await res.json();
-      console.log('streams', this.streams)
+    },
+
+    async fetchStreamDetails(id) {
+      const response = await fetch(`/api/streams/${id}`);
+      return response.data
     },
 
     async deleteStream(id) {

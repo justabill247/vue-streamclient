@@ -11,8 +11,9 @@
       v-for="s in schedules"
       :key="s.name"
       class="bg-gray-800 rounded-lg p-3 flex justify-between items-center"
+      @click="onScheduleClick(s.id)"
     >
-      <div class="flex items-center" @click="onScheduleClick(s.id)">
+      <div class="flex items-center" >
         <img
           v-if="s.stream.logo_url"
           :src="getFullUrl(s.stream.logo_url)"

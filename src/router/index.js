@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import StreamsView from "../views/StreamsView.vue";
+import StreamDetailsView from "../views/StreamDetailsView.vue";
 import RecordingsView from "../views/RecordingsView.vue";
 import ScheduleView from "../views/ScheduleView.vue";
 import SettingsView from "../views/SettingsView.vue";
@@ -13,6 +14,7 @@ const routes = [
   { path: "/", component: HomeView },
   { path: "/streams", component: StreamsView },
   { path: "/add-stream", component: AddStreamView },
+  { path: "/stream/:id/details", component: StreamDetailsView },
   { path: "/schedule", component: ScheduleView },
   { path: "/add-schedule", component: AddScheduleView },
   { path: "/schedule/:id/details", name:"ScheduleDetails", component: ScheduleDetailsView, props: true},
