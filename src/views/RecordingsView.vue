@@ -4,10 +4,11 @@
       <h1 class="text-xl font-semibold">Recordings</h1>
       <button
         @click="showRecordModal = true"
-        class="bg-spotify-green hover:bg-green-600 text-black font-semibold px-4 py-2 rounded-full transition"
+        class="bg-red-600 hover:bg-red-700 border border-gray-500 text-white font-semibold px-4 py-2 rounded-full transition flex items-center gap-2"
         title="Record Now"
       >
-        ⏺️ Record Now
+        
+        Record Now
       </button>
     </div>
 
@@ -34,26 +35,26 @@
         <div class="flex items-center space-x-2">
           <button
             @click="playRecording(rec)"
-            class="text-spotify-green text-lg"
+            class="text-spotify-green hover:text-green-400 transition"
             title="Play recording"
           >
-            ▶️
+            <PlayIcon class="w-5 h-5" />
           </button>
 
           <button
             @click="downloadRecording(rec)"
-            class="text-gray-400 hover:text-white text-lg"
+            class="text-gray-400 hover:text-white transition"
             title="Download"
           >
-            ⬇️
+            <ArrowDownTrayIcon class="w-5 h-5" />
           </button>
 
           <button
             @click="deleteRecording(rec)"
-            class="text-gray-400 hover:text-red-500 text-lg"
+            class="text-gray-400 hover:text-red-500 transition"
             title="Delete"
           >
-            🗑️
+            <TrashIcon class="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -63,7 +64,7 @@
     <transition name="modal">
       <div
         v-if="showRecordModal"
-        class="fixed inset-0 bg-black opacity-50 flex items-center justify-center z-50"
+        class="fixed inset-0 bg-black opacity-90 flex items-center justify-center z-50"
       >
         <div class="bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-700 max-w-md w-full">
           <h2 class="text-2xl font-bold mb-4 text-white">Record Now</h2>
@@ -162,6 +163,7 @@
 import { ref, onMounted, watch } from "vue";
 import { usePlayerStore } from "../stores/player";
 import { useRecordingStatus } from "../composables/useRecordingStatus";
+import { PlayIcon, ArrowDownTrayIcon, TrashIcon, StopIcon } from "@heroicons/vue/24/outline";
 import dayjs from "dayjs";
 
 const player = usePlayerStore();

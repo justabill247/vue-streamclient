@@ -26,7 +26,7 @@
       </div>
 
       <div class="flex text-gray-300 gap-3">
-        <button @click="playStream(stream)" class="text-spotify-green text-lg">
+        <button @click.stop="playStream(stream)" class="text-spotify-green text-lg hover:text-green-400 transition">
           <PlayIcon class="h-6 w-6" />
         </button>
       </div>
