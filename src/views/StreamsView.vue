@@ -25,7 +25,7 @@
         </div>
       </div>
 
-      <div class="flex text-spotify-text-secondary gap-2 opacity-0 group-hover:opacity-100 transition">
+      <div class="flex text-spotify-text-secondary gap-2 transition">
         <button @click.stop="playStream(stream)" class="text-spotify-green hover:text-spotify-green-bright transition p-2" title="Play">
           <PlayIcon class="h-5 w-5" />
         </button>

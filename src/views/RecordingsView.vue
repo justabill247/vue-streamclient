@@ -32,7 +32,7 @@
           <span class="text-xs text-spotify-text-secondary truncate">{{ formatDate(rec.start_time) }} for {{formatDuration(rec.duration)}}</span>
         </div>
 
-        <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition">
+        <div class="flex items-center space-x-2 transition">
           <button
             @click="playRecording(rec)"
             class="text-spotify-green hover:text-spotify-green-bright transition p-2"
