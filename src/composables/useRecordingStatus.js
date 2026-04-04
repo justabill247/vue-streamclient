@@ -5,6 +5,26 @@ let reconnectTimeout = null;
 let useCount = 0;
 const activeRecordingCount = ref(0);
 const recordings = ref([]);
+const activeJobs = ref([]);
+const schedules = ref([]);
+const scheduleStateLoaded = ref(false);
+
+async function fetchScheduleState() {
+  try {
+    const response = await fetch('/api/schedule');
+    if (!response.ok) {
+      throw new Error(`Failed to load schedules: ${response.status}`);
+    }
+
+    const data = await response.json();
+    activeJobs.value = data.activeJobs || [];
+    schedules.value = data.schedules || [];
+    scheduleStateLoaded.value = true;
+    console.log('[Recording Status] Schedule state refreshed from API:', data);
+  } catch (error) {
+    console.error('[Recording Status] Failed to fetch schedule state:', error);
+  }
+}
 
 export function useRecordingStatus() {
   const connect = () => {
@@ -39,6 +59,11 @@ export function useRecordingStatus() {
             activeRecordingCount.value = data.activeCount || 0;
             recordings.value = data.recordings || [];
             console.log('[Recording Status] Updated - Active:', data.activeCount, 'Recordings:', data.recordings);
+          } else if (data.type === 'schedule-state') {
+            activeJobs.value = data.activeJobs || [];
+            schedules.value = data.schedules || [];
+            scheduleStateLoaded.value = true;
+            console.log('[Recording Status] Schedule state updated:', data);
           }
         } catch (err) {
           console.error('[Recording Status] Failed to parse message:', err);
@@ -81,6 +106,10 @@ export function useRecordingStatus() {
       console.log('[Recording Status] First component mounted, connecting...');
       connect();
     }
+
+    if (!scheduleStateLoaded.value) {
+      fetchScheduleState();
+    }
   });
 
   onUnmounted(() => {
@@ -95,6 +124,10 @@ export function useRecordingStatus() {
   return {
     activeRecordingCount,
     recordings,
+    activeJobs,
+    schedules,
+    scheduleStateLoaded,
+    fetchScheduleState,
     connect,
     disconnect
   };

@@ -9,14 +9,20 @@ export const usePlayerStore = defineStore("player", () => {
   // --- Actions ---
   function playTrack(track) {
     console.log("playing", track.url)
-    currentTrack.value = track;
+    currentTrack.value = {
+      ...track,
+      mediaType: track.mediaType ?? "recording",
+    };
     isPlaying.value = true;
     console.log('isPlaying is', isPlaying)
   }
 
   function playStream(stream) {
     console.log("playing stream", stream.url)
-    currentTrack.value = stream;
+    currentTrack.value = {
+      ...stream,
+      mediaType: "stream",
+    };
     isPlaying.value = true;
   }
 
@@ -37,6 +43,7 @@ export const usePlayerStore = defineStore("player", () => {
     currentTrack,
     isPlaying,
     playTrack,
+    playStream,
     pause,
     togglePlay,
     setPlaying

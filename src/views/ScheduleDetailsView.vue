@@ -100,22 +100,45 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import router from "../router";
 import { usePlayerStore } from "../stores/player";
 import { getFullUrl } from "../utils/api";
 import { ArrowLeftIcon } from "@heroicons/vue/24/outline";
+import { useRecordingStatus } from "../composables/useRecordingStatus";
 
 const route = useRoute();
 const player = usePlayerStore();
 const showDeleteDialog = ref(false);
 const schedule = ref(null);
 const loading = ref(true);
+const { schedules, fetchScheduleState, scheduleStateLoaded } = useRecordingStatus();
+
+watch(schedules, (nextSchedules) => {
+  if (loading.value || !schedule.value) {
+    return;
+  }
+
+  const stillExists = nextSchedules.some((item) => String(item.id) === String(route.params.id));
+  if (!stillExists) {
+    router.push("/schedule");
+  }
+});
 
 onMounted(async () => {
+  if (!scheduleStateLoaded.value) {
+    fetchScheduleState();
+  }
+
   const id = route.params.id;
   const res = await fetch(`/api/schedule/${id}/details`);
+  if (!res.ok) {
+    loading.value = false;
+    router.push("/schedule");
+    return;
+  }
+
   schedule.value = await res.json();
   loading.value = false;
 });

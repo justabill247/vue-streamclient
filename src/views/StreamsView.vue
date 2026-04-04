@@ -53,7 +53,7 @@ const player = usePlayerStore();
 onMounted(store.fetchStreams);
 
 function playStream(stream) {
-  player.playTrack({
+  player.playStream({
     id: stream.id,
     name: stream.name,
     url: stream.url,

@@ -4,10 +4,9 @@
       <h1 class="text-2xl font-bold text-spotify-text-primary">Recordings</h1>
       <button
         @click="showRecordModal = true"
-        class="bg-red-600 hover:bg-red-700 border border-gray-600 text-white font-semibold px-4 py-2 rounded-full transition flex items-center gap-2 active:scale-95"
+        class="bg-red-600 hover:bg-red-700 border border-gray-600 text-white font-semibold px-4 py-2 rounded-full transition active:scale-95"
         title="Record Now"
       >
-        <StopIcon class="w-5 h-5" />
         Record Now
       </button>
     </div>

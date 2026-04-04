@@ -38,26 +38,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
 import router from "../router";
 import cronstrue from "cronstrue";
-import { PlusIcon, EllipsisVerticalIcon } from "@heroicons/vue/24/outline";
+import { PlusIcon } from "@heroicons/vue/24/outline";
 import { getFullUrl } from "../utils/api";
 import { formatTimeHrsMins } from "../utils/time";
+import { useRecordingStatus } from "../composables/useRecordingStatus";
 
-
-const schedules = ref([]);
+const { schedules, fetchScheduleState, scheduleStateLoaded } = useRecordingStatus();
 
 function onScheduleClick(id){
 console.log('sc',id)
 router.push({ name: "ScheduleDetails", params: { id: id } });
 }
 
-
-onMounted(async () => {
-  const res = await fetch("/api/schedule");
-  const data = await res.json();
-  schedules.value = data.schedules;
-  console.log("schedule", schedules.value);
-});
+if (!scheduleStateLoaded.value) {
+  fetchScheduleState();
+}
 </script>
