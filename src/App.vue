@@ -23,8 +23,8 @@
         <RadioIcon />
         <span class="text-xs mt-1">Streams</span>
       </router-link>
-      <router-link to="/recordings" class="flex flex-col items-center h-full p-2 relative hover:text-white transition">
-        <CircleStackIcon />
+      <router-link to="/recordings" class="recordings-nav-link flex flex-col items-center h-full p-2 relative hover:text-white transition">
+        <CircleStackIcon class="recordings-nav-icon" />
         <span class="text-xs mt-1">Recordings</span>
         <!-- Recording Badge with Pulsing Animation -->
         <div 
@@ -35,7 +35,7 @@
         </div>
         <div 
           v-else
-          class="absolute top-1 right-1 bg-transparent text-spotify-text-secondary text-xs font-bold px-1.5 py-0.5 rounded border-2 border-spotify-green"
+          class="badge-idle"
         >
           Idle
         </div>
@@ -73,6 +73,7 @@ nav a.router-link-active {
   position: absolute;
   top: 0.25rem;
   right: 0.25rem;
+  z-index: 20;
   width: 1.5rem;
   height: 1.5rem;
   background-color: rgb(220, 38, 38);
@@ -84,6 +85,36 @@ nav a.router-link-active {
   align-items: center;
   justify-content: center;
   animation: pulseBadge 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.recordings-nav-link {
+  position: relative;
+}
+
+.recordings-nav-icon {
+  position: relative;
+  z-index: 1;
+}
+
+.badge-idle {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.1rem;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.2rem;
+  height: 1.3rem;
+  padding: 0 0.35rem;
+  border-radius: 9999px;
+  background-color: rgb(40, 40, 40);
+  color: rgb(179, 179, 179);
+  border: 1px solid rgb(64, 64, 64);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 @keyframes pulseBadge {

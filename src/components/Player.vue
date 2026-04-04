@@ -10,11 +10,11 @@
           class="w-12 h-12 rounded-md object-cover"
         />
         <div class="flex flex-col min-w-0">
-          <span class="font-semibold truncate text-spotify-text-primary">
+          <span class="text-sm font-medium truncate text-spotify-text-primary leading-tight">
             {{ currentTrack?.name || "Nothing playing" }}
           </span>
-          <span class="text-spotify-text-secondary text-xs truncate">
-            {{ currentTrack?.description || "" }}
+          <span v-if="trackMetaText" class="text-[11px] text-spotify-text-disabled truncate leading-tight mt-0.5">
+            {{ trackMetaText }}
           </span>
         </div>
       </div>
@@ -45,7 +45,7 @@
           <!-- Volume Control -->
           <div class="relative">
             <button
-              @click="showVolumeControl = !showVolumeControl"
+              @click="toggleVolumeControl"
               class="text-spotify-text-secondary hover:text-spotify-text-primary transition p-1"
               title="Volume"
             >
@@ -58,7 +58,7 @@
             <!-- Volume Slider Popup -->
             <div
               v-if="showVolumeControl"
-              class="absolute bottom-full right-0 mb-3 bg-spotify-bg-tertiary rounded-lg p-3 flex flex-col items-center gap-2 border border-spotify-border shadow-lg"
+              class="volume-popup absolute bottom-full left-1/2 -translate-x-1/2 mb-3 rounded-lg p-3 flex flex-col items-center gap-2 border border-spotify-border shadow-lg"
             >
               <input
                 v-model.number="volume"
@@ -123,12 +123,32 @@ let volumeHideTimeout = null;
 const currentTrack = computed(() => playerStore.currentTrack);
 const isPlaying = computed(() => isAudioPlaying.value);
 const isLiveStream = computed(() => currentTrack.value?.mediaType === "stream");
+const trackMetaText = computed(() => {
+  if (!currentTrack.value) return "";
+  if (currentTrack.value.mediaType === "recording" && currentTrack.value.recordedAt) {
+    return `Recorded ${formatRecordedAt(currentTrack.value.recordedAt)}`;
+  }
+  return currentTrack.value.description || "";
+});
 
 const formatTime = (seconds) => {
   if (!seconds || isNaN(seconds) || !isFinite(seconds)) return "0:00";
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
   return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+};
+
+const formatRecordedAt = (value) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
 };
 
 const resetPlaybackMetrics = () => {
@@ -217,16 +237,35 @@ const updateVolume = () => {
   audioEl.value.volume = volume.value / 100;
 };
 
-const onVolumeInput = () => {
-  updateVolume();
+const clearVolumeHideTimeout = () => {
+  if (volumeHideTimeout) {
+    clearTimeout(volumeHideTimeout);
+    volumeHideTimeout = null;
+  }
+};
 
-  // Clear existing timeout
-  if (volumeHideTimeout) clearTimeout(volumeHideTimeout);
-
-  // Set new timeout to hide after 2 seconds of no changes
+const scheduleVolumeHide = () => {
+  clearVolumeHideTimeout();
   volumeHideTimeout = setTimeout(() => {
     showVolumeControl.value = false;
+    volumeHideTimeout = null;
   }, 2000);
+};
+
+const toggleVolumeControl = () => {
+  showVolumeControl.value = !showVolumeControl.value;
+
+  if (showVolumeControl.value) {
+    scheduleVolumeHide();
+    return;
+  }
+
+  clearVolumeHideTimeout();
+};
+
+const onVolumeInput = () => {
+  updateVolume();
+  scheduleVolumeHide();
 };
 
 // watch for changes to current track
@@ -265,6 +304,11 @@ watch(currentTrack, async (newTrack) => {
 .player-shell {
   width: 100%;
   background-color: rgb(25, 20, 20);
+}
+
+.volume-popup {
+  background-color: rgb(25, 20, 20);
+  opacity: 1;
 }
 
 /* optional scrollbar fix for mobile */

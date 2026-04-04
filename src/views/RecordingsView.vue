@@ -4,7 +4,7 @@
       <h1 class="text-2xl font-bold text-spotify-text-primary">Recordings</h1>
       <button
         @click="showRecordModal = true"
-        class="bg-red-600 hover:bg-red-700 border border-gray-600 text-white font-semibold px-4 py-2 rounded-full transition active:scale-95"
+        class="secondary-action submit-action px-4 py-2 rounded-lg transition font-semibold active:scale-95"
         title="Record Now"
       >
         Record Now
@@ -19,44 +19,19 @@
       No recordings found.
     </div>
 
-    <div v-else class="grid grid-cols-1 gap-3">
-      <div
+    <div v-else class="grid grid-cols-1 gap-2">
+      <RecordingListItem
         v-for="rec in recordings"
         :key="rec.id"
-        class="bg-spotify-bg-card hover:bg-spotify-bg-tertiary rounded-lg p-4 flex items-center justify-between transition border border-spotify-border hover:border-spotify-text-secondary group"
-      >
-        <div class="flex flex-col overflow-hidden">
-          <span class="font-semibold text-spotify-text-primary truncate">{{ rec.name }}</span>
-          <span class="text-xs text-spotify-text-secondary truncate">{{ rec.stream_name }}</span>
-          <span class="text-xs text-spotify-text-secondary truncate">{{ formatDate(rec.start_time) }} for {{formatDuration(rec.duration)}}</span>
-        </div>
-
-        <div class="flex items-center space-x-2 transition">
-          <button
-            @click="playRecording(rec)"
-            class="text-spotify-green hover:text-spotify-green-bright transition p-2"
-            title="Play recording"
-          >
-            <PlayIcon class="w-5 h-5" />
-          </button>
-
-          <button
-            @click="downloadRecording(rec)"
-            class="text-spotify-text-secondary hover:text-spotify-text-primary transition p-2"
-            title="Download"
-          >
-            <ArrowDownTrayIcon class="w-5 h-5" />
-          </button>
-
-          <button
-            @click="deleteRecording(rec)"
-            class="text-spotify-text-secondary hover:text-red-500 transition p-2"
-            title="Delete"
-          >
-            <TrashIcon class="w-5 h-5" />
-          </button>
-        </div>
-      </div>
+        :recording="rec"
+        :subtitle="rec.stream_name"
+        :logo-url="rec.logo_url"
+        :show-download="true"
+        :show-delete="true"
+        @play="playRecording"
+        @download="downloadRecording"
+        @delete="deleteRecording"
+      />
     </div>
 
     <!-- Record Now Modal -->
@@ -65,94 +40,115 @@
         v-if="showRecordModal"
         class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
       >
-        <div class="bg-spotify-bg-secondary p-6 rounded-lg shadow-lg border border-spotify-border max-w-md w-full">
-          <h2 class="text-2xl font-bold mb-6 text-spotify-text-primary">Record Now</h2>
-
-          <!-- Stream Selection -->
+        <div class="bg-spotify-bg-secondary p-6 rounded-xl shadow-lg border border-spotify-border max-w-2xl w-full">
           <div class="mb-6">
-            <label class="block text-sm font-semibold text-spotify-text-primary mb-3">Stream</label>
-            <div class="flex gap-2 mb-4">
-              <button
-                @click="recordForm.mode = 'preset'"
-                :class="[
-                  'flex-1 py-2 rounded-lg font-medium transition',
-                  recordForm.mode === 'preset'
-                    ? 'bg-spotify-green text-black'
-                    : 'bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border hover:bg-spotify-bg-card hover:border-spotify-text-secondary'
-                ]"
-              >
-                From List
-              </button>
-              <button
-                @click="recordForm.mode = 'custom'"
-                :class="[
-                  'flex-1 py-2 rounded-lg font-medium transition',
-                  recordForm.mode === 'custom'
-                    ? 'bg-spotify-green text-black'
-                    : 'bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border hover:bg-spotify-bg-card hover:border-spotify-text-secondary'
-                ]"
-              >
-                Custom URL
-              </button>
+            <h2 class="text-2xl font-bold text-spotify-text-primary">Record Now</h2>
+            <p class="text-sm text-spotify-text-secondary mt-1">Start a manual recording from a saved stream or a one-off URL.</p>
+          </div>
+
+          <div class="space-y-6">
+            <div class="bg-spotify-bg-card border border-spotify-border rounded-xl p-4 space-y-4">
+              <div>
+                <label class="block text-sm font-semibold mb-2 text-spotify-text-primary">Recording Name</label>
+                <input
+                  v-model="recordForm.name"
+                  type="text"
+                  placeholder="e.g. Friday Mix Test"
+                  class="w-full bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border rounded-lg p-3 placeholder-spotify-text-disabled focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green"
+                  required
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-spotify-text-primary mb-2">Source</label>
+                <div class="schedule-type-shell grid grid-cols-2 gap-2 rounded-lg bg-spotify-bg-tertiary p-1 border border-spotify-border">
+                  <button
+                    type="button"
+                    class="schedule-type-button px-4 py-2 rounded-md text-sm font-semibold transition"
+                    :class="recordForm.mode === 'preset' ? 'schedule-type-button-active text-spotify-green' : 'text-spotify-text-secondary hover:text-spotify-text-primary'"
+                    @click="recordForm.mode = 'preset'"
+                  >
+                    From List
+                  </button>
+                  <button
+                    type="button"
+                    class="schedule-type-button px-4 py-2 rounded-md text-sm font-semibold transition"
+                    :class="recordForm.mode === 'custom' ? 'schedule-type-button-active text-spotify-green' : 'text-spotify-text-secondary hover:text-spotify-text-primary'"
+                    @click="recordForm.mode = 'custom'"
+                  >
+                    Custom URL
+                  </button>
+                </div>
+              </div>
+
+              <div v-if="recordForm.mode === 'preset'">
+                <label class="block text-sm font-semibold mb-2 text-spotify-text-primary">Saved Stream</label>
+                <select
+                  v-model.number="recordForm.streamId"
+                  class="themed-native-control w-full bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border rounded-lg p-3 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green"
+                  required
+                >
+                  <option value="" class="bg-spotify-bg-secondary">Select a stream...</option>
+                  <option v-for="s in allStreams" :key="s.id" :value="s.id" class="bg-spotify-bg-secondary">
+                    {{ s.name }}
+                  </option>
+                </select>
+              </div>
+
+              <div v-else>
+                <label class="block text-sm font-semibold mb-2 text-spotify-text-primary">Custom Stream URL</label>
+                <input
+                  v-model="recordForm.customUrl"
+                  type="url"
+                  placeholder="https://example.com/stream"
+                  class="w-full bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border rounded-lg p-3 placeholder-spotify-text-disabled focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green"
+                  required
+                />
+                <p class="mt-2 text-xs text-spotify-text-disabled">Use this for a source you do not want to save as a stream.</p>
+              </div>
             </div>
 
-            <!-- Stream Selection Dropdown -->
-            <select
-              v-if="recordForm.mode === 'preset'"
-              v-model.number="recordForm.streamId"
-              class="w-full bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border rounded-lg p-3 mb-4 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green"
-              required
-            >
-              <option value="" class="bg-spotify-bg-secondary">Select a stream...</option>
-              <option v-for="s in allStreams" :key="s.id" :value="s.id" class="bg-spotify-bg-secondary">
-                {{ s.name }}
-              </option>
-            </select>
+            <div class="bg-spotify-bg-card border border-spotify-border rounded-xl p-4 space-y-4">
+              <div>
+                <label class="block text-sm font-semibold mb-2 text-spotify-text-primary">Duration</label>
+                <div class="grid grid-cols-2 gap-3">
+                  <select
+                    v-model.number="durationHours"
+                    class="themed-native-control w-full bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border rounded-lg p-3 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green"
+                  >
+                    <option v-for="hour in 24" :key="hour - 1" :value="hour - 1" class="bg-spotify-bg-secondary">
+                      {{ hour - 1 }} hr
+                    </option>
+                  </select>
+                  <select
+                    v-model.number="durationMinutes"
+                    class="themed-native-control w-full bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border rounded-lg p-3 focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green"
+                  >
+                    <option v-for="minute in 60" :key="minute - 1" :value="minute - 1" class="bg-spotify-bg-secondary">
+                      {{ minute - 1 }} min
+                    </option>
+                  </select>
+                </div>
+                <p class="text-xs text-spotify-text-disabled mt-2">Total duration: {{ durationLabel }}</p>
+              </div>
+            </div>
 
-            <!-- Custom URL Input -->
-            <input
-              v-else
-              v-model="recordForm.customUrl"
-              type="url"
-              placeholder="Enter stream URL (e.g., https://example.com/stream)"
-              class="w-full bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border rounded-lg p-3 mb-4 placeholder-spotify-text-disabled focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green"
-              required
-            />
-          </div>
-
-          <!-- Duration Input -->
-          <div class="mb-6">
-            <label class="block text-sm font-semibold text-spotify-text-primary mb-3">Duration (seconds)</label>
-            <input
-              v-model.number="recordForm.duration"
-              type="number"
-              min="1"
-              max="3600"
-              placeholder="300"
-              class="w-full bg-spotify-bg-tertiary text-spotify-text-primary border border-spotify-border rounded-lg p-3 placeholder-spotify-text-disabled focus:outline-none focus:border-spotify-green focus:ring-1 focus:ring-spotify-green"
-              required
-            />
-            <p class="text-xs text-spotify-text-secondary mt-2">Max 1 hour (3600 seconds)</p>
-          </div>
-
-          <!-- Buttons -->
-          <div class="flex gap-3">
-            <button
-              @click="startRecording"
-              :disabled="isRecording"
-              class="flex-1 text-black font-semibold py-2 rounded-lg transition active:scale-95 disabled:bg-spotify-bg-card disabled:text-spotify-text-disabled cursor-disabled"
-              style="background-color: #1DB954"
-              :style="{ backgroundColor: isRecording ? '#404040' : '#1DB954', color: isRecording ? '#b3b3b3' : 'black' }"
-            >
-              {{ isRecording ? "Recording..." : "Start Recording" }}
-            </button>
-            <button
-              @click="showRecordModal = false"
-              :disabled="isRecording"
-              class="flex-1 bg-spotify-bg-tertiary hover:bg-spotify-bg-card disabled:bg-spotify-bg-card text-spotify-text-primary disabled:text-spotify-text-secondary font-semibold py-2 rounded-lg transition active:scale-95 border border-spotify-border"
-            >
-              Cancel
-            </button>
+            <div class="flex gap-3">
+              <button
+                @click="startRecording"
+                :disabled="isRecording"
+                class="flex-1 bg-spotify-green hover:bg-spotify-green-bright text-black font-semibold py-3 px-4 rounded-lg transition active:scale-95 disabled:bg-spotify-bg-card disabled:text-spotify-text-disabled disabled:border disabled:border-spotify-border"
+              >
+                {{ isRecording ? "Recording..." : "Start Recording" }}
+              </button>
+              <button
+                @click="showRecordModal = false"
+                :disabled="isRecording"
+                class="flex-1 secondary-action px-4 py-3 rounded-lg transition font-semibold active:scale-95 disabled:opacity-60"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -161,11 +157,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { computed, ref, onMounted, watch } from "vue";
 import { usePlayerStore } from "../stores/player";
 import { useRecordingStatus } from "../composables/useRecordingStatus";
-import { PlayIcon, ArrowDownTrayIcon, TrashIcon, StopIcon } from "@heroicons/vue/24/outline";
-import dayjs from "dayjs";
+import RecordingListItem from "../components/RecordingListItem.vue";
 
 const player = usePlayerStore();
 const { activeRecordingCount } = useRecordingStatus();
@@ -175,12 +170,29 @@ const allStreams = ref([]);
 const loading = ref(true);
 const showRecordModal = ref(false);
 const isRecording = ref(false);
+const durationHours = ref(0);
+const durationMinutes = ref(5);
+
+const durationSeconds = computed(() => durationHours.value * 3600 + durationMinutes.value * 60);
+const durationLabel = computed(() => {
+  const parts = [];
+
+  if (durationHours.value > 0) {
+    parts.push(`${durationHours.value} hr`);
+  }
+
+  if (durationMinutes.value > 0 || parts.length === 0) {
+    parts.push(`${durationMinutes.value} min`);
+  }
+
+  return parts.join(" ");
+});
 
 const recordForm = ref({
+  name: "",
   mode: "preset", // 'preset' or 'custom'
   streamId: "",
   customUrl: "",
-  duration: 300 // 5 minutes default
 });
 
 async function fetchRecordings() {
@@ -217,12 +229,17 @@ watch(activeRecordingCount, async (newCount, oldCount) => {
 
 async function startRecording() {
   // Validation
-  if (!recordForm.value.duration || recordForm.value.duration <= 0) {
+  if (!recordForm.value.name || !recordForm.value.name.trim()) {
+    alert("Please enter a recording name");
+    return;
+  }
+
+  if (durationSeconds.value <= 0) {
     alert("Duration must be greater than 0");
     return;
   }
 
-  if (recordForm.value.duration > 3600) {
+  if (durationSeconds.value > 3600) {
     alert("Maximum duration is 1 hour (3600 seconds)");
     return;
   }
@@ -253,30 +270,35 @@ async function startRecording() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
+        name: recordForm.value.name.trim(),
         streamId: streamId,
         url: url,
-        duration: recordForm.value.duration
+        duration: durationSeconds.value
       })
     });
 
     const result = await response.json();
 
     if (response.ok) {
-      alert(`Recording started! Recording for ${recordForm.value.duration} seconds.`);
+      const refreshDelayMs = durationSeconds.value * 1000 + 1000;
+
+      alert(`Recording started: ${recordForm.value.name.trim()} for ${durationLabel.value}.`);
       showRecordModal.value = false;
       
       // Reset form
       recordForm.value = {
+        name: "",
         mode: "preset",
         streamId: "",
         customUrl: "",
-        duration: 300
       };
+      durationHours.value = 0;
+      durationMinutes.value = 5;
 
       // Refresh recordings after a delay
       setTimeout(() => {
         fetchRecordings();
-      }, recordForm.value.duration * 1000 + 1000);
+      }, refreshDelayMs);
     } else {
       alert(result.error || "Failed to start recording");
     }
@@ -295,7 +317,8 @@ function playRecording(rec) {
     id: rec.id,
     name: rec.name,
     url: url,
-    logo_url: rec.logo_url
+    logo_url: rec.logo_url,
+    recordedAt: rec.start_time,
   });
 }
 
@@ -326,25 +349,60 @@ async function deleteRecording(rec) {
   }
 }
 
-function formatDate(dateString) {
-  const day = dayjs(dateString).format("MM/DD/YYYY")
-  const time = dayjs(dateString).format("h:mm A")
-  return `${day} at ${time}`;
-}
-
-function formatDuration(seconds) {
-  const hrs = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-
-  if (hrs > 0) {
-    return `${hrs} hr${hrs > 1 ? "s" : ""} ${mins} min${mins !== 1 ? "s" : ""}`;
-  } else {
-    return `${mins} min${mins !== 1 ? "s" : ""}`;
-  }
-}
-
 onMounted(() => {
   fetchRecordings();
   fetchStreams();
 });
 </script>
+
+<style scoped>
+.schedule-type-shell {
+  background-color: rgba(31, 41, 55, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.schedule-type-button {
+  border: 1px solid transparent;
+}
+
+.schedule-type-button-active {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(17, 24, 39, 0.98) 100%);
+  border-color: rgba(29, 185, 84, 0.55);
+  box-shadow:
+    inset 0 0 0 1px rgba(29, 185, 84, 0.18),
+    0 0 0 1px rgba(29, 185, 84, 0.14),
+    0 8px 20px rgba(0, 0, 0, 0.28);
+}
+
+.schedule-type-button:not(.schedule-type-button-active) {
+  background-color: rgba(15, 23, 42, 0.45);
+}
+
+.schedule-type-button:not(.schedule-type-button-active):hover {
+  background-color: rgba(51, 65, 85, 0.65);
+}
+
+.themed-native-control {
+  color-scheme: dark;
+  background-color: rgb(31, 41, 55);
+  color: rgb(241, 245, 249);
+}
+
+.themed-native-control option,
+.themed-native-control optgroup {
+  background-color: rgb(15, 23, 42);
+  color: rgb(241, 245, 249);
+}
+
+.secondary-action {
+  background-color: rgba(15, 23, 42, 0.7);
+  color: rgb(241, 245, 249);
+  border: 1px solid rgba(71, 85, 105, 0.7);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.secondary-action:hover {
+  background-color: rgba(30, 41, 59, 0.95);
+  border-color: rgba(100, 116, 139, 0.9);
+}
+</style>

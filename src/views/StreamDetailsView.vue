@@ -77,25 +77,14 @@
         <div v-if="!stream.recordings || stream.recordings.length === 0" class="text-spotify-text-secondary">
           <p>No recordings yet</p>
         </div>
-        <div
-          v-for="rec in stream.recordings"
-          :key="rec.id"
-          class="p-3 bg-spotify-bg-card hover:bg-spotify-bg-tertiary rounded-lg mb-3 border border-spotify-border hover:border-spotify-text-secondary transition"
-        >
-          <div class="font-semibold text-spotify-text-primary">{{ rec.name }}</div>
-          <div class="text-sm text-spotify-text-secondary">
-            {{ new Date(rec.start_time).toLocaleString() }}
-          </div>
-          <div v-if="rec.duration" class="text-sm text-spotify-text-disabled">
-            Duration: {{ Math.floor(rec.duration / 60) }}m {{ rec.duration % 60 }}s
-          </div>
-          <button 
-            v-if="rec.file_path"
-            class="mt-2 bg-spotify-green hover:bg-spotify-green-bright text-black px-3 py-1 rounded-lg text-sm transition font-semibold active:scale-95"
-            @click="playRecording(rec)"
-          >
-            Play
-          </button>
+        <div v-else class="grid grid-cols-1 gap-2">
+          <RecordingListItem
+            v-for="rec in stream.recordings"
+            :key="rec.id"
+            :recording="rec"
+            :logo-url="stream.logo_url"
+            @play="playRecording"
+          />
         </div>
       </div>
       
@@ -111,6 +100,7 @@ import router from "../router";
 import { getFullUrl } from "../utils/api";
 import { ArrowLeftIcon, PencilIcon, CheckIcon } from "@heroicons/vue/24/outline";
 import { useLogoUpload } from "../composables/useLogoUpload";
+import RecordingListItem from "../components/RecordingListItem.vue";
 
 const route = useRoute();
 const player = usePlayerStore();
@@ -202,8 +192,8 @@ function playRecording(recording) {
       id: recording.id,
       name: recording.name,
       url: `${import.meta.env.VITE_API_BASE_URL}/audio/${filename}`,
-      description: `Recorded on ${new Date(recording.start_time).toLocaleString()}`,
       logo_url: stream.value?.logo_url,
+      recordedAt: recording.start_time,
     });
   }
 }
