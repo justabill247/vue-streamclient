@@ -1,37 +1,41 @@
-# Frontend Changes (April 4-5, 2026)
+# Release: 0.2.0-beta (April 5, 2026)
 
 ## Release Notes
 
 ### New Features
 - **Live Schedule Synchronization**: Real-time schedule updates from WebSocket broadcasts
-- **Shared Recording Component**: `RecordingListItem` component used across all recording lists (home, recordings, stream details, schedule details)
-- **Improved Recording Flow**: Enhanced record-now modal with hours/minutes spinners and custom naming
-- **Recurring vs One-shot UI**: Redesigned add-schedule flow to clearly distinguish recurring and one-shot scheduling
-- **Dark Theme Player**: Redestyled player with opaque dark container bar and improved visual hierarchy
+- **Shared Recording Component**: `RecordingListItem` component used across all recording lists
+- **Improved Recording Flow**: Hours/minutes spinners and custom recording naming
+- **Recurring vs One-shot UI**: Clear distinction in add-schedule flow
+- **Dark Theme Player**: Opaque dark container with improved visual hierarchy
 
 ### UI/UX Improvements
-- **Unified Card-based Design**: Consistent styling across add-stream, add-schedule, and record-now views
-- **Schedule Details Simplification**: Removed redundant metadata cards, inline duration with schedule summary
-- **Player Metadata**: Enhanced player transport state, live badge behavior, and stream playback actions
-- **Home Page Redesign**: Replaced static placeholder with real API-driven recent recordings and upcoming schedules
-- **Expandable Lists**: Added show-more/collapsible behavior for recording lists
+- **Unified Card-based Design**: Consistent styling across all forms (add-stream, add-schedule, record-now)
+- **Schedule Details Simplification**: Removed redundancy, improved metadata display
+- **Home Page Redesign**: Real API-driven recent recordings with expandable lists
+- **Player Improvements**: Better transport state handling and metadata display
+- **Favicon & Branding**: Dark theme with Spotify green accent throughout
 
 ### Code Quality
-- **Component Extraction**: Reduced duplication by creating shared `RecordingListItem` component
-- **Composable Utilities**: Shared logic for recording status and logo uploads
-- **Consistent Styling**: Tailwind CSS dark theme with Spotify green accent throughout
+- **Component Extraction**: Reduced duplication with shared `RecordingListItem`
+- **Composable Utilities**: Shared logic reduces code coupling
+- **Clean Architecture**: Pinia stores + WebSocket integration for real-time updates
+- **Build Optimized**: dist/ ready for production deployment
 
-### Infrastructure
-- **Build Ready**: dist/ built and optimized (March 31, 2026)
-- **Environment Configuration**: Uses `VITE_API_BASE_URL` for flexible API endpoint configuration
-- **Development Proxy**: Vite proxy configured for local API development
+### Breaking Changes
+None - fully backward compatible
+
+### Known Limitations
+- Beta: Monitor for edge cases in production
+- WebSocket connection requires working backend
+- Recording list sorting is descending by start_time only
 
 ### Testing
-✅ No commited pages broken after component extraction  
-✅ Recording rows display correctly with logos across all views  
-✅ WebSocket real-time schedule updates functional  
+✅ No broken pages after component extraction  
+✅ Recording rows display correctly across all views  
+✅ WebSocket real-time updates functional  
 ✅ Custom recording names working end-to-end  
-✅ Player attach/detach behavior stable  
+✅ Player stable across navigations  
 
 ---
 
